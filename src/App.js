@@ -1,9 +1,9 @@
-import BaseMap from "./components/BaseMap";
+import LiveData from "./components/LiveData";
 
 function App() {
   return (
     <div>
-      <BaseMap />
+      <LiveData />
     </div>
   );
 }
