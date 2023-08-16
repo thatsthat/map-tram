@@ -1,9 +1,9 @@
-import LiveData from "./components/LiveData";
+import LiveDataTwo from "./components/LiveDataTwo";
 
 function App() {
   return (
     <div>
-      <LiveData />
+      <LiveDataTwo />
     </div>
   );
 }

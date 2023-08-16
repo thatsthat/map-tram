@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from "react";
 import "./styles.css";
 
-const LiveData = () => {
-  const [token, setToken] = useState(0);
+const LiveDataTwo = () => {
   const [data, setData] = useState(0);
-
   const fetchToken = async () => {
     try {
       const aBody = new URLSearchParams();
@@ -25,7 +23,7 @@ const LiveData = () => {
       );
       try {
         const content = await rawResponse.json();
-        setToken(content.access_token);
+        return content.access_token;
       } catch (e) {
         console.log(e);
       }
@@ -33,18 +31,10 @@ const LiveData = () => {
       console.log(e);
     }
   };
-
-  const fetchData = async () => {
+  const fetchData = async (token) => {
     try {
-      if (token === 0) await fetchToken();
       const rawResponse = await fetch(
-        /*         "https://opendata.tram.cat/api/v1/activeVehicles?" +
-          new URLSearchParams({
-            networkId: 1,
-            lineId: 1,
-          }), */
-
-        "https://opendata.tram.cat/api/v1/networks",
+        "https://opendata.tram.cat/api/v1/activeVehicles?networkId=1&lineId=2",
         {
           method: "GET",
           // prettier-ignore
@@ -55,7 +45,7 @@ const LiveData = () => {
         }
       );
       try {
-        const response = await rawResponse;
+        const response = await rawResponse.json();
         return response;
       } catch (e) {
         console.log(e);
@@ -66,30 +56,20 @@ const LiveData = () => {
   };
 
   useEffect(() => {
-    const getData = async () => {
-      const response = await fetchData();
-      return response.status;
+    const getInfo = async () => {
+      const token = await fetchToken();
+      const info = await fetchData(token);
+      //console.log(info);
+      setData(info);
     };
-    console.log(getData());
-    /*       if (response.status === 401) {
-        await fetchToken();
-        const response2 = await fetchData()
-        setData(response2.json())
-      }
-      else setData(response.json())
-    }
-    if (response.status === 401) {
-          await fetchToken();
-        } else setData(response.json());
-    fetchData();  */
+    getInfo();
   }, []);
 
   return (
     <div>
-      <div>{JSON.stringify(data)}</div>
-      <div>{JSON.stringify(token)}</div>
+      <pre>{JSON.stringify(data, null, 2)}</pre>
     </div>
   );
 };
 
-export default LiveData;
+export default LiveDataTwo;
