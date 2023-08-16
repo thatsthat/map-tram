@@ -61,8 +61,11 @@ const LiveDataTwo = () => {
       const info = await fetchData(token);
       //console.log(info);
       setData(info);
+      console.log(JSON.stringify(data, null, 2));
     };
-    getInfo();
+    const id = setInterval(getInfo, 5000);
+
+    return () => clearInterval(id);
   }, []);
 
   return (
