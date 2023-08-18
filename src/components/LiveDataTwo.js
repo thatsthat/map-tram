@@ -3,6 +3,8 @@ import "./styles.css";
 
 const LiveDataTwo = () => {
   const [data, setData] = useState(0);
+  const [token, setToken] = useState(0);
+
   const fetchToken = async () => {
     try {
       const aBody = new URLSearchParams();
@@ -45,10 +47,13 @@ const LiveDataTwo = () => {
         }
       );
       try {
-        const response = await rawResponse.json();
+        const rData = await rawResponse.json();
+        const rStatus = await rawResponse.status;
+        const response = { data: rData, status: rStatus };
         return response;
       } catch (e) {
         console.log(e);
+        return { data: 0, status: 401 };
       }
     } catch (e) {
       console.log(e);
@@ -57,11 +62,16 @@ const LiveDataTwo = () => {
 
   useEffect(() => {
     const getInfo = async () => {
-      const token = await fetchToken();
+      console.log(token);
       const info = await fetchData(token);
-      //console.log(info);
-      setData(info);
-      console.log(JSON.stringify(data, null, 2));
+      if (info.status === 401) {
+        const tkn = await fetchToken();
+        setToken(tkn);
+        const info2 = await fetchData(tkn);
+        setData(info2.data);
+      } else {
+        setData(info.data);
+      }
     };
     const id = setInterval(getInfo, 5000);
 
