@@ -47,8 +47,16 @@ const LiveDataTwo = () => {
         }
       );
       try {
-        const rData = await rawResponse.json();
+        const rDataFull = await rawResponse.json();
         const rStatus = await rawResponse.status;
+        const rData = rDataFull.map((a) => {
+          return {
+            next: a.nextStopName,
+            pos: a.vehiclePosition,
+            delay: a.delay,
+            time: Date.now(),
+          };
+        });
         const response = { data: rData, status: rStatus };
         return response;
       } catch (e) {
@@ -62,7 +70,6 @@ const LiveDataTwo = () => {
 
   useEffect(() => {
     const getInfo = async () => {
-      console.log(token);
       const info = await fetchData(token);
       if (info.status === 401) {
         const tkn = await fetchToken();
@@ -73,10 +80,14 @@ const LiveDataTwo = () => {
         setData(info.data);
       }
     };
-    const id = setInterval(getInfo, 5000);
+    let id = 0;
+    if (token === 0) getInfo();
+    else {
+      id = setTimeout(getInfo, 31000);
+    }
 
-    return () => clearInterval(id);
-  }, []);
+    return () => clearTimeout(id);
+  }, [token, data]);
 
   return (
     <div>
